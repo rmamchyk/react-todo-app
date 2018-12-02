@@ -1,39 +1,30 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import Header from './components/Header';
+import Todo from './components/Todo';
+
 function App(props) {
     return (
         <main>
-            <header>
-                <h1>{props.title}</h1>
-            </header>
+            <Header title={props.title} />
 
             <section className="todo-list">
-                <div className="todo completed">
-                    <button className="checkbox icon">
-                        <i className="material-icons">check_box</i>
-                    </button>
-                    <span className="todo-title">Learn JavaScript</span>
-                    <button className="delete icon">
-                        <i className="material-icons">delete</i>
-                    </button>
-                </div>
-                <div className="todo">
-                    <button className="checkbox icon">
-                        <i className="material-icons">check_box_outline_blank</i>
-                    </button>
-                    <span className="todo-title">Learn React</span>
-                    <button className="delete icon">
-                        <i className="material-icons">delete</i>
-                    </button>
-                </div>
+                {props.todos.map(todo => 
+                    <Todo key={todo.id} title={todo.title} completed={todo.completed}/>)
+                }
             </section>
         </main>
     );
 };
 
 App.propTypes = {
-    title: PropTypes.string
+    title: PropTypes.string,
+    todos: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        title: PropTypes.string.isRequired,
+        completed: PropTypes.bool.isRequired
+    })).isRequired
 };
 
 App.defaultProps = {
