@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { TransitionGroup , CSSTransition } from 'react-transition-group';
 
 import Header from './components/Header';
 import Todo from './components/Todo';
@@ -31,6 +32,7 @@ class App extends React.Component {
     }
 
     handleDelete(id) {
+        console.log(id);
         let todos = this.state.todos.filter(todo => todo.id !== id);
         this.setState({todos});
     }
@@ -42,10 +44,11 @@ class App extends React.Component {
 
     handleAdd(title) {
         let todo = {
-            id: this._nextId,
+            id: this.nextId(),
             title,
             completed: false
         };
+        console.log(todo.id);
         let todos = [...this.state.todos, todo];
         this.setState({todos});
     }
@@ -65,17 +68,29 @@ class App extends React.Component {
             <main>
                 <Header title={this.props.title} todos={this.state.todos} />
     
-                <section className="todo-list">
+                <TransitionGroup
+                    component="section"
+                    className="todo-list"
+                    appear={true}
+                    timeout={500}>
                     {this.state.todos.map((todo, index) => 
-                        <Todo key={index} 
-                            id={todo.id}
-                            title={todo.title} 
-                            completed={todo.completed}
-                            onDelete={this.handleDelete}
-                            onEdit={this.handleEdit}
-                            onStatusChange={this.handleStatusChange} />)
+                        <CSSTransition
+                            key={todo.id}
+                            timeout={500}
+                            classNames="slide"
+                            unmountOnExit
+                            >
+                            <Todo key={todo.id} 
+                                id={todo.id}
+                                title={todo.title} 
+                                completed={todo.completed}
+                                onDelete={this.handleDelete}
+                                onEdit={this.handleEdit}
+                                onStatusChange={this.handleStatusChange} />
+                        </CSSTransition>
+                            )
                     }
-                </section>
+                </TransitionGroup>
 
                 <Form onAdd={this.handleAdd}/>
             </main>
