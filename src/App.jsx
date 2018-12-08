@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import Header from './components/Header';
 import Todo from './components/Todo';
+import Form from './components/Form';
 
 class App extends React.Component {
     constructor(props) {
@@ -14,6 +15,8 @@ class App extends React.Component {
 
         this.handleStatusChange = this.handleStatusChange.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
+        this.handleAdd = this.handleAdd.bind(this);
+        this.handleEdit = this.handleEdit.bind(this);
     }
 
     handleStatusChange(id) {
@@ -31,22 +34,50 @@ class App extends React.Component {
         let todos = this.state.todos.filter(todo => todo.id !== id);
         this.setState({todos});
     }
+
+    nextId() {
+        this._nextId = this._nextId || 4;
+        return this._nextId++;
+    }
+
+    handleAdd(title) {
+        let todo = {
+            id: this._nextId,
+            title,
+            completed: false
+        };
+        let todos = [...this.state.todos, todo];
+        this.setState({todos});
+    }
     
+    handleEdit(id, title) {
+        let todos = this.state.todos.map(todo => {
+            if (todo.id === id) {
+                todo.title = title;
+            }
+            return todo;
+        });
+        this.setState({todos});
+    }
+
     render() {
         return (
             <main>
-                <Header title={this.props.title} />
+                <Header title={this.props.title} todos={this.state.todos} />
     
                 <section className="todo-list">
-                    {this.state.todos.map(todo => 
-                        <Todo key={todo.id} 
+                    {this.state.todos.map((todo, index) => 
+                        <Todo key={index} 
                             id={todo.id}
                             title={todo.title} 
                             completed={todo.completed}
                             onDelete={this.handleDelete}
+                            onEdit={this.handleEdit}
                             onStatusChange={this.handleStatusChange} />)
                     }
                 </section>
+
+                <Form onAdd={this.handleAdd}/>
             </main>
         );
     }
